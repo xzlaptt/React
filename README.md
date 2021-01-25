@@ -1,10 +1,11 @@
 ---
 title: react
 date: 2021-01-20 11:13:20
-tags: react
-cover: "/../img/react.jpg"
-categories: react
 ---
+
+> 以下是观看尚硅谷React课程所做的笔记。
+>
+> [尚硅谷React](https://www.bilibili.com/video/BV1wy4y1D7JT?p=43&t=5)
 
 # React简介
 
