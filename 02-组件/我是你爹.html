@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .show{
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 准备好容器 -->
+    <div id="test">
+
+    </div>
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js" type="text/javascript"></script>
+
+
+<!--这里使用了babel用来解析jsx语法-->
+<script type="text/babel">
+
+        function Did(){
+            return <div>
+                        这是个输入框：<input value = "我是你爹" className = "show" readOnly/>
+                    </div>
+        }
+        //2.渲染组件
+        ReactDOM.render(<Did />,document.getElementById("test"))
+
+    
+</script>
+
+
+
+</html>

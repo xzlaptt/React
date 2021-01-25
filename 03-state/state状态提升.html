@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 准备好容器 -->
+    <div id="test">
+        
+    </div>
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<script type="text/babel">
+       
+       //定义一个父组件
+       class Father extends React.Component{
+            state = {du:""}
+            render(){
+                return (<form>
+                        <Hua value = {this.state.du}/>
+                        <Hua value = {this.state.du}/>
+                    </form>)
+            }
+       }
+        //定义华摄氏度组件
+        class Hua{
+            render(){
+                return <input 
+                    name="温度"
+                    type="text"
+                    onChange={this.handleInputChange}
+                    />
+            }
+        }
+        ReactDOM.render(<Father  />,document.getElementById("test"));
+        
+    
+</script>
+</html>

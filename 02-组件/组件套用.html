@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 准备好容器 -->
+    <div id="test">
+
+    </div>
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js" type="text/javascript"></script>
+
+
+<!--这里使用了babel用来解析jsx语法-->
+<script type="text/babel">
+
+        //创建一个组件<li>
+        function GetLi(props){      
+            return <li>{props.value}</li>
+        };
+
+        // 1.创建类式组件<ul>
+        class MyComponent extends React.Component{
+            render(){
+                console.log(this.props.arr);
+                let com = this.props.arr.map((item,index)=>
+                        <GetLi value={item} key = {index} />
+                    );
+                console.log(com);
+                return <ul>{com}</ul>
+            }
+        }
+        
+        let num = [1,2,3,4]
+        //2.渲染组件
+        ReactDOM.render(<MyComponent  arr={num}/>,document.getElementById("test"))
+
+    
+</script>
+
+
+
+</html>

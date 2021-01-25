@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 准备好容器 -->
+    <div id="test">
+        
+    </div>
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+
+<!--这里使用了js来创建虚拟DOM-->
+<script type="text/javascript">
+        // 1.创建虚拟DOM[在这使用了js的语法]React.createElement(标签,标签属性,内容)
+        const VDOM = React.createElement('h1',{id:"title"},"nihao")
+        // 2.渲染，如果有多个渲染同一个容器，后面的会将前面的覆盖掉
+        ReactDOM.render(VDOM,document.getElementById("test"));
+        //虚拟DOM本质就是一个对象
+        console.log(VDOM,typeof VDOM);
+        console.log(document.getElementById("test"));
+        //虚拟DOM比较的轻，真实的DOM比较的重，属性比较多
+        //debugger
+        
+</script>
+
+</html>

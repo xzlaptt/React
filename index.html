@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+    class demo{
+        show(){
+            //类中
+            console.log(this);
+        }
+    }
+    let d = new demo();
+    d.show();
+    const d1 = d.show;
+    d1();
+</script>
+</html>

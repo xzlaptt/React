@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+
+</head>
+<body>
+    <div id = "div" >
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+   class A extends React.Component{
+
+        constructor(props){
+            console.log("A --- constructor")
+            super(props);
+            this.state = {num:1}
+        }
+
+        add = () => {
+            let {num} = this.state;
+            this.setState({num:num+1});
+            //强制更新
+            //this.forceUpdate();
+        }
+
+       render(){
+           console.log("A --- render");
+            return (
+                <div>
+                    <h1>这个是第{this.state.num}个</h1>
+                    <B name = {this.state.num}/>
+                    <button onClick = {this.add}>点击加一</button>
+                </div>
+            )
+       }
+
+       //在render之前执行
+       componentWillMount(){
+            console.log("A --- componentWillMount");
+       }
+
+       //在render之后执行
+       componenetDidMount(){
+        console.log("A --- componenetDidMount");
+       }
+
+       //更新操作 setState之后执行，判断是否可以更新（true可以，false不可以）
+       shouldComponentUpdate(){
+            console.log("A --- shouldComponentUpdate");
+            return true;
+       }
+       // 组件更新之前
+       componentWillUpdate(){
+            console.log("A --- componentWillUpdate");
+       }
+       //组件更新之后
+       componentDidUpdate(){
+            console.log("A --- componentDidUpdate");
+       }
+
+       //卸载组件之后
+       componentWillUnmonut(){
+            console.log("A --- componentWillUnmonut");
+       }
+     
+   }
+   class B extends React.Component{
+       render(){
+           return(   
+                <div>
+                    <h1>这个是B组件,传递过来的是：{this.props.name}</h1>
+                    
+                </div>
+           )
+       }
+       //父组件进行了更新，子组件先执行这个
+       componentWillReceiveProps(){
+        console.log("A --- componentWillReceiveProps");
+       }
+   }
+
+
+    ReactDOM.render(<A   />,document.getElementById("div"));
+
+</script>
+</html>

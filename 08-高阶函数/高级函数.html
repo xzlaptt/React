@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+/*
+    高级函数：
+    1.如果函数的参数是函数
+    2.如果函数返回一个函数
+    函数的珂里化：
+    通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式
+*/
+
+    class Login extends React.Component{
+
+        login = (event) =>{
+            event.preventDefault(); //阻止表单提交
+            console.log(this.name.value);
+            console.log(this.pwd.value);
+        }
+ 
+        state = {name:"",pwd:""};
+
+        saveType = (type) =>{
+            return (event) => {
+                this.setState({[type]:event.target.value});
+            }
+        }
+
+        
+        //因为事件中必须是一个函数，所以返回的也是一个函数，这样就符合规范了
+        render() {
+            return (
+                <form action="http://www.baidu.com" >
+                    用户名：<input onChange = {this.saveType('name')} type = "text" name ="username"/>
+                    {/*直接调用回调函数也是可以的：将数据传递过去就可以*/}
+                    用户名：<input onChange = {(event)=>{this.saveType('name',event)}} type = "text" name ="username"/>
+                    密码<input onChange = {this.saveType('pwd')} type = "password" name ="password"/>
+                    <button>登录</button>
+                </form>
+            )
+        }
+    }
+
+    ReactDOM.render(<Login />,document.getElementById("div"));
+</script>
+</html>

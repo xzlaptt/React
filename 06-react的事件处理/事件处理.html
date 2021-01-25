@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+    class Dom extends React.Component{
+        /*
+            React的事件是通过onXxx属性指定时间处理函数
+                React使用的都是自定义的时间，而不是原生的事件
+                React中的事件是通过事件委托方式处理的
+            通过event.target得到发生事件的Dom元素对象
+        */
+
+        //通过API，创建React的容器，相当于对于回调函数创建了一个相应的API，省略了中间环节
+        //但是这个容器是专门专用的，所以每一个ref都需要创建这个
+        //官方提示我们不要过度的使用ref，如果发生时间的元素刚好是需要操作的元素，就可以使用事件去替代。
+        MyRef = React.createRef();
+        MyRef1 = React.createRef();
+        
+        btnOnClick = () =>{
+            //创建之后，将自身节点，传入current中
+            console.log(this.MyRef.current.value);
+            //alert(this.refs.dian.value);
+        }
+        inputBlur = () =>{
+            console.log(this.MyRef1.current.value);
+            //lert(this.refs.shiqu   .value);
+        }
+        render(){
+            return (
+                <div>
+                    <input ref={this.MyRef} type="text" placeholder="点击弹出" />&nbsp;
+                    <button onClick = {this.btnOnClick}>点击</button>&nbsp;
+                    <input ref={this.MyRef1} onBlur={this.inputBlur} type="text" placeholder="失去焦点弹出弹出" />
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(<Dom />,document.getElementById("div"));
+
+</script>
+</html>

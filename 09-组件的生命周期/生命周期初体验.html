@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+
+</head>
+<body>
+    <div id = "div" >
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+    class Life extends React.Component{
+        /*
+           组件从创建到死亡，会经过一些特定的阶段
+            React组件中包含一系列钩子函数{生命周期回调函数}，会在特定的时刻调用
+            我们在定义组件的时候，会在特定的声明周期回调函数中，做特定的工作
+        */
+
+        //定义透明度
+        state = {time:1};
+
+        stop = () => {
+            //卸载组件
+            ReactDOM.unmountComponentAtNode(document.getElementById("div"))
+          
+        }
+
+        //在组建挂载(渲染之后进行)
+        componentDidMount(){
+            //定时器
+            this.Inter = setInterval(()=>{
+                let {time} = this.state;
+                time -= 0.1;
+                if(time <= 0){
+                    time = 1;
+                }
+                this.setState({time:time});
+            },200);
+        }
+
+        //组件被卸载之后执行
+        componentWillUnmount(){
+            clearInterval(this.Inter);
+        }
+
+        render(){
+            return (
+                <div>
+                    <h2 style = {{opacity:this.state.time}}>声明周期</h2>
+                    <button onClick = {this.stop}>结束</button>
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(<Life />,document.getElementById("div"));
+
+</script>
+</html>

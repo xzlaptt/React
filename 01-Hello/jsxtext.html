@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <!-- 准备好容器 -->
+    <div id="test">
+        
+    </div>
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+<!--这里使用了js来创建虚拟DOM-->
+<script type="text/babel">
+        const data =["1","2","3"];
+        // 1.创建虚拟DOM
+        const VDOM = (
+            <div>
+                <h1>hhh</h1>
+                <ul>
+                    { //{}里面只能放表达式
+                        //如果渲染的是一个列表，每一行必须要有一个key
+                        data.map((item,index)=>{
+                            return <li key = {index}>{item}</li>
+                        })
+                    }
+                </ul>    
+            </div>
+        )
+        // 2.渲染，如果有多个渲染同一个容器，后面的会将前面的覆盖掉
+        ReactDOM.render(VDOM,document.getElementById("test"));
+        
+
+</script>
+
+</html>

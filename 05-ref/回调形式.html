@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+    class Dom extends React.Component{
+
+        state = {isHot:true};
+
+        btnOnClick = () =>{
+            alert(this.dian.value);
+        }
+        inputBlur = () =>{
+            alert(this.shiqu.value);
+        }
+        btnOnClick2 = () =>{
+            this.setState({isHot:!this.state.isHot});
+        }
+        isRef = (self) =>{
+            console.log(self);
+            this.dian = self;
+            console.log("sss")
+        }
+        render(){
+            //回调形式的ref 在ref中执行回调函数，将自身作为参数传递给回调函数
+            return (
+                <div>
+                {/*<input ref={self =>{ this.dian = self;console.log(self)}} type="text" placeholder="点击弹出" />&nbsp;*/}
+                <input ref={this.isRef} type="text" placeholder="点击弹出" />&nbsp;
+                    <button onClick = {this.btnOnClick}>点击</button>&nbsp;
+                    <button onClick = {this.btnOnClick2}>点击</button>&nbsp;
+                    <input ref={self => this.shiqu = self} onBlur={this.inputBlur} type="text" placeholder="失去焦点弹出弹出" />
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(<Dom />,document.getElementById("div"));
+
+</script>
+</html>

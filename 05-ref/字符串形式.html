@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+    class Dom extends React.Component{
+
+        btnOnClick = () =>{
+            alert(this.refs.dian.value);
+        }
+        inputBlur = () =>{
+            alert(this.refs.shiqu   .value);
+        }
+        render(){
+            return (
+                <div>
+                    <input ref="dian" type="text" placeholder="点击弹出" />&nbsp;
+                    <button onClick = {this.btnOnClick}>点击</button>&nbsp;
+                    <input ref="shiqu" onBlur={this.inputBlur} type="text" placeholder="失去焦点弹出弹出" />
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(<Dom />,document.getElementById("div"));
+
+</script>
+</html>

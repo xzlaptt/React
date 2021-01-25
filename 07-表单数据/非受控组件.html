@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../js/react.development.js" type="text/javascript"></script>
+<script src="../js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+
+/*
+    页面中所有的输入数据都是现用现取的，就是非受控的组件
+*/
+
+    class Login extends React.Component{
+
+        login = (event) =>{
+            event.preventDefault(); //阻止表单提交
+            console.log(this.name.value);
+            console.log(this.pwd.value);
+        }
+        render() {
+            return (
+                <form action="http://www.baidu.com" onSubmit={this.login}>
+                    用户名：<input ref = {self => this.name =self } type = "text" name ="username"/>
+                    密码<input ref = {self => this.pwd =self } type = "password" name ="password"/>
+                    <button>登录</button>
+                </form>
+            )
+        }
+    }
+
+    ReactDOM.render(<Login />,document.getElementById("div"));
+</script>
+</html>
