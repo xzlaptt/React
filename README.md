@@ -679,13 +679,15 @@ btnOnClick = () =>{
 
 # React事件
 
-React的事件是通过onXxx属性指定时间处理函数
+React的事件是通过onXxx属性指定事件处理函数
 
 ​        React使用的都是自定义的时间，而不是原生的事件
 
 ​        React中的事件是通过事件委托方式处理的
 
-​      通过event.target得到发生事件的Dom元素对象
+​		事件中必须返回的是函数
+
+​        通过event.target得到发生事件的Dom元素对象
 
 比如：
 
@@ -701,17 +703,194 @@ saveName = (event) =>{
 
 **受控和非受控组件**
 
-简单来说：
+先来说说受控组件：
 
-页面中所有的输入数据都是现用现取的，或者说组件的状态不受React控制的组件 就是非受控的组件
+ 使 React 的 state 成为“唯一数据源”。渲染表单的 React 组件还控制着用户输入过程中表单发生的操作。被 React 以这种方式控制取值的表单输入元素就叫做“受控组件”。 
 
-受控制组件，组件的状态受React控制的组件，就是使用事件和statem,输入类的组件，就是将内容绑定到state中的，在使用的时候使用state里面的  
+```react
+saveName = (event) =>{
+    this.setState({name:event.target.value});
+}
 
+savePwd = (event) => {
+    this.setState({pwd:event.target.value});
+}
 
+render() {
+    return (
+        <form action="http://www.baidu.com" onSubmit={this.login}>
+            用户名：<input value={this.state.name} onChange={this.saveName} type = "text" />
+            密码<input value={this.state.pwd} onChange={this.savePwd} type = "password"/>
+            <button>登录</button>
+        </form>
+    )
+}
+```
+
+由于在表单元素上设置了 `value` 属性，因此显示的值将始终为 `this.state.value`，这使得 React 的 state 成为唯一数据源。由于 `onchange` 在每次按键时都会执行并更新 React 的 state，因此显示的值将随着用户输入而更新。
+
+对于受控组件来说，输入的值始终由 React 的 state 驱动。
+
+非受控组件：
+
+非受控组件其实就是表单元素的值不会更新state。输入数据都是现用现取的。
+
+如下：下面并没有使用state来控制属性，使用的是事件来控制表单的属性值。
+
+```react
+class Login extends React.Component{
+
+    login = (event) =>{
+        event.preventDefault(); //阻止表单提交
+            console.log(this.name.value);
+            console.log(this.pwd.value);
+        }
+        render() {
+            return (
+                <form action="http://www.baidu.com" onSubmit={this.login}>
+                用户名：<input ref = {self => this.name =self } type = "text" name ="username"/>
+                密码：<input ref = {self => this.pwd =self } type = "password" name ="password"/>
+                <button>登录</button>
+                </form>
+            )
+    }
+}
+```
+
+**高级函数**
+
+  1.如果函数的参数是函数
+
+  2.如果函数返回一个函数
+
+**函数的珂里化**
+
+  通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式
+
+如下，我们将上面的案例简化，创建高级函数：
+
+```react
+ class Login extends React.Component{
+ 
+        state = {name:"",pwd:""};
+		
+		//返回一个函数
+        saveType = (type) =>{
+            return (event) => {
+                this.setState({[type]:event.target.value});
+            }
+        }
+
+        //因为事件中必须是一个函数，所以返回的也是一个函数，这样就符合规范了
+        render() {
+            return (
+                <form>
+      				<input onChange = {this.saveType('name')} type = "text"/>
+                    <button>登录</button>
+                </form>
+            )
+        }
+    }
+
+    ReactDOM.render(<Login />,document.getElementById("div"));
+```
+
+# 生命周期
+
+## （旧）
+
+组件从创建到死亡，会经过一些特定的阶段
+
+​      React组件中包含一系列钩子函数{生命周期回调函数}，会在特定的时刻调用
+
+​      我们在定义组件的时候，会在特定的声明周期回调函数中，做特定的工作
+
+如下图是旧生命周期的结构图：
 
 ![旧生命周期](./react/1611490156766.png)
 
+我们通过一个案例更详细的了解这个生命周期：
 
+```react
+ class A extends React.Component{
 
+        constructor(props){
+            console.log("A --- constructor")
+            super(props);
+            this.state = {num:1}
+        }
 
+        add = () => {
+            let {num} = this.state;
+            this.setState({num:num+1});
+            //强制更新
+            //this.forceUpdate();
+        }
+
+       render(){
+           console.log("A --- render");
+            return (
+                <div>
+                    <h1>这个是第{this.state.num}个</h1>
+                    <B name = {this.state.num}/>
+                    <button onClick = {this.add}>点击加一</button>
+                </div>
+            )
+       }
+
+       //在render之前执行
+       componentWillMount(){
+            console.log("A --- componentWillMount");
+       }
+
+       //在render之后执行
+       componenetDidMount(){
+        console.log("A --- componenetDidMount");
+       }
+
+       //更新操作 setState之后执行，判断是否可以更新（true可以，false不可以）
+       shouldComponentUpdate(){
+            console.log("A --- shouldComponentUpdate");
+            return true;
+       }
+       // 组件将要更新之前
+       componentWillUpdate(){
+            console.log("A --- componentWillUpdate");
+       }
+       //组件更新之后
+       componentDidUpdate(){
+            console.log("A --- componentDidUpdate");
+       }
+
+       //卸载组件之后
+       componentWillUnmonut(){
+            console.log("A --- componentWillUnmonut");
+       }
+     
+   }
+   class B extends React.Component{
+       render(){
+           return(   
+                <div>
+                    <h1>这个是B组件,传递过来的是：{this.props.name}</h1>
+                </div>
+           )
+       }
+       //父组件进行了更新，子组件先执行这个
+       componentWillReceiveProps(){
+        console.log("A --- componentWillReceiveProps");
+       }
+   }
+    ReactDOM.render(<A   />,document.getElementById("div"));
+```
+
+我们在控制台看一下：
+
+当我们刚刚打开控制台的时候，组件第一次加载：
+
+![组件第一次加载](./react/1611568192158.png)
+
+当我们点击按钮更新sate的时候：
+
+![更新state](./react/1611568250881.png)
 
