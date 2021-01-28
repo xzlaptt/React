@@ -844,7 +844,7 @@ class Login extends React.Component{
        }
 
        //在render之后执行
-       componenetDidMount(){
+       componentDidMount(){
         console.log("A --- componenetDidMount");
        }
 
@@ -857,7 +857,7 @@ class Login extends React.Component{
        componentWillUpdate(){
             console.log("A --- componentWillUpdate");
        }
-       //组件更新之后
+       //组件更新之后，该函数可以接受相应的参数
        componentDidUpdate(){
             console.log("A --- componentDidUpdate");
        }
@@ -876,7 +876,7 @@ class Login extends React.Component{
                 </div>
            )
        }
-       //父组件进行了更新，子组件先执行这个
+       //父组件进行了更新，子组件先执行这个【注意，第一次传递数据的时候，并不执行】
        componentWillReceiveProps(){
         console.log("A --- componentWillReceiveProps");
        }
@@ -894,3 +894,240 @@ class Login extends React.Component{
 
 ![更新state](./react/1611568250881.png)
 
+## （新）
+
+在最新的react版本中，有些生命周期钩子被抛弃了，在官网中是这样说的：
+
+我们得到最重要的经验是，过时的组件生命周期往往会带来不安全的编码实践，具体函数如下：
+
+- `componentWillMount`
+- `componentWillReceiveProps`
+- `componentWillUpdate`
+
+这些生命周期方法经常被误解和滥用；此外，我们预计，在异步渲染中，它们潜在的误用问题可能更大。我们将在即将发布的版本中为这些生命周期添加 “UNSAFE_” 前缀。（这里的 “unsafe” 不是指安全性，而是表示使用这些生命周期的代码在 React 的未来版本中更有可能出现 bug，尤其是在启用异步渲染之后。）
+
+由此可见，新版本中并不推荐持有这三个函数，取而代之的是带有UNSAFE_ 前缀的三个函数，比如: UNSAFE_ componentWillMount。即便如此，其实React官方还是不推荐大家去使用，在以后版本中有可能会去除这几个函数。
+
+如下图是新的生命周期：
+
+![新生命周期](./react/1611651795885.png)
+
+从图上可以看出，新生命周期和旧生命周期的区别主要有：
+
+1.抛弃了上面所说的三个钩子函数【其实还可以使用】
+
+2.新添加了两个钩子函数
+
+现在重点说一下，新添加的钩子函数
+
+**static getDerivedStateFromProps(props, state)**
+
+首先，该函数会调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用；该函数必须是静态的；给组件传递的数据（props）以及组件状态（state），会作为参数到这个函数中；该函数也必须有返回值，返回一个Null或者state对象。因为初始化和后续更新都会执行这个方法，因此在这个方法返回state对象，就相当于将原来的state进行了覆盖，所以倒是修改状态不起作用。
+
+**getSnapshotBeforeUpdate(prevProps, prevState)**
+
+ `getSnapshotBeforeUpdate()` 在最近一次渲染输出（提交到 DOM 节点）之前调用。它使得组件能在发生更改之前从 DOM 中捕获一些信息（例如，滚动位置）。此生命周期的任何返回值将作为参数传递`componentDidUpdate()`。 
+
+> 补充一下：componentDidUpdate(prevProps, prevState, snapshot)
+>
+> 该生命周期函数，可以有三个参数：原始传过来的参数，最开始的状态，getSnapshotBeforeUpdate传递的值
+>
+> 关于更多关于生命周期的介绍，可以参考官方文档：
+>
+> https://zh-hans.reactjs.org/docs/react-component.html#render
+
+以上就是两个新添加的钩子函数，但是在现实开发中可能并不常用这两个。
+
+**案例：在一个区域内，定时的输出以行话，如果内容大小超过了区域大小，就出现滚动条，但是内容不进行移动 **
+
+![案例](./react/BeforeGender.gif)
+
+如上面的动图：区域内部的内容展现没有变化，但是可以看见滚动条在变化，也就是说上面依旧有内容在输出，只不过不在这个区域内部展现。
+
+**实现：**
+
+【一些css样式，就不在这展示了】
+
+1.首先我们先实现定时输出内容
+
+我们可以使用state状态，改变新闻后面的值，但是为了同时显示这些内容，我们应该为state的属性定义一个数组。并在创建组件之后开启一个定时器，不断的进行更新state。更新渲染组件
+
+```react
+ class New extends React.Component{
+
+        state = {num:[]};
+
+        //在组件创建之后,开启一个定时任务
+        componentDidMount(){
+            setInterval(()=>{
+                let {num} = this.state;
+                const news = (num.length+1);
+                this.setState({num:[news,...num]});
+            },2000);
+        }
+
+        render(){
+            return (
+
+                <div ref = "list" className = "list">{
+                    this.state.num.map((n,index)=>{
+                    return <div className="news" key={index} >新闻{n}</div>
+                    })
+                }</div>
+            )
+        }
+  }
+  ReactDOM.render(<New />,document.getElementById("div"));
+
+```
+
+2.接下来就是控制滚动条了
+
+我们在组件渲染到DOM之前获取组件的高度，然后用组件渲染之后的高度减去之前的高度就是一条新的内容的高度，这样在不断的累加到滚动条位置上。
+
+```react
+getSnapshotBeforeUpdate(){
+	return this.refs.list.scrollHeight;
+}
+
+componentDidUpdate(preProps,preState,height){
+	this.refs.list.scrollTop += (this.refs.list.scrollHeight - height);
+}
+```
+
+这样就实现了这个功能。
+
+# Diff算法
+
+提到这个算法，就必须说一下关于Key的事情了。
+
+其实每个组件中的每个标签都会有一个key,只不过有的必须显示的指定，有的可以隐藏。
+
+ 如果生成的render出来后就不会改变里面的内容，那么你不需要指定key（不指定key时，React也会生成一个默认的标识）,或者将index作为key，只要key不重复即可。
+
+但是如果你的标签是动态的，是有可能刷新的，就必须显示的指定key。必须上面案使用map进行便利的时候就必须指定Key:
+
+```react
+this.state.num.map((n,index)=>{
+	return <div className="news" key={index} >新闻{n}</div>
+})
+```
+
+这个地方虽然显示的指定了key，但是**官网并不推荐使用Index作为Key去使用**；
+
+这样会很有可能会有效率上的问题
+
+举个例子：
+
+在一个组件中，我们先创建了两个对象，通过循环的方式放入< li>标签中，此时key使用的是index。
+
+```react
+person:[
+    {id:1,name:"张三",age:18},
+    {id:2,name:"李四",age:19}
+]
+
+this.state.person.map((preson,index)=>{
+  return  <li key = {index}>{preson.name}</li>
+})
+```
+
+如下图展现在页面中：
+
+![原始对象数组](./react/1611800406864.png)
+
+此时，我们想在点击按钮之后动态的添加一个对象，并且放入到li标签中，在重新渲染到页面中。
+
+我们通过修改State来控制对象的添加。
+
+```react
+<button onClick={this.addObject}>点击增加对象</button>
+addObject = () =>{
+    let {person} = this.state;
+    const p = {id:(person.length+1),name:"王五",age:20};
+    this.setState({person:[p,...person]});
+}
+```
+
+如下动图所示：
+
+ ![原始对象数组](./react/addObject.gif) 
+
+这样看，虽然完成了功能。但是其实存在效率上的问题，	我们先来看一下两个前后组件状态的变化：
+
+![组件状态的变化](./react/1611800988496.png)
+
+我们发现，组件第一个变成了王五，张三和李四都移下去了。因为我们使用Index作为Key，这三个标签的key也就发生了改变【张三原本的key是0，现在变成了1，李四的key原本是1，现在变成了2，王五变成了0】在组件更新状态重新渲染的时候，就出现了问题：
+
+因为react是通过key来比较组件标签是否一致的，拿这个案例来说：
+
+首先，状态更新导致组件标签更新，react根据Key，判断旧的虚拟DOM和新的虚拟DOM是否一致
+
+key = 0 的时候 旧的虚拟DOM 内容是张三  新的虚拟DOM为王五 ，react认为内容改变，从而重新创建新的真实DOM.
+
+key = 1 的时候 旧的虚拟DOM 内容是李四，新的虚拟DOM为张三，react认为内容改变，从而重新创建新的真实DOM
+
+key = 2 的时候 旧的虚拟DOM没有，创建新的真实DOM 
+
+这样原本有两个虚拟DOM可以复用，但都没有进行复用，完完全全的都是新创建的；这就导致效率极大的降低。
+
+其实这是因为我们将新创建的对象放在了首位，如果放在最后其实是没有问题的，但是因为官方并不推荐使用Index作为key值，我们推荐使用id作为key值。从而完全避免这样的情况。
+
+**用index作为key可能会引发的问题:**
+
+1。若对数据进行:逆序添加、逆序删除等破坏顺序操作:
+
+​		会产生没有必要的真实DOM更新  界面效果没问题,但效率低。
+
+2．如果结构中还包含输入类的DOM:
+
+​        会产生错误DOM更新   界面有问题。
+
+3，注意! 如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，仅用于渲染列表用于展示，使用index作为key是没有问题的。
+
+**开发如何选择key?**
+
+最好使用每一条数据的唯一标识作为key 比如id，手机号，身份证号
+
+如果确定只是简单的展示数据，用Index也是可以的
+
+**而这个判断key的比较规则就是Diff算法**
+
+Diff算法其实就是react生成的新虚拟DOM和以前的旧虚拟DOM的比较规则：
+
+- 如果旧的虚拟DOM中找到了与新虚拟DOM相同的key:
+  - 如果内容没有变化，就直接只用之前旧的真实DOM
+  - 如果内容发生了变化，就生成新的真实DOM			
+
+- 如果旧的虚拟DOM中没有找到了与新虚拟DOM相同的key:
+  - 根据数据创建新的真实的DOM,随后渲染到页面上
+
+# React脚手架
+
+react提供了一个用于创建react项目的脚手架库：create-react-app
+
+创建项目并启动：
+
+1.全局安装：npm i -g create-react-app
+
+2.创建项目：create-react-app 项目名  
+
+在这一步，有可能会出现：
+
+![不是内部命令](./react/1611803687193.png)
+
+这样可以直接使用：npx create-react-app 项目名 
+
+3.等待下载完成，进入项目文件夹，运行一下
+
+比如，我这的项目名称是hello,就先进入hello文件夹
+
+cd hello
+
+npm start   //启动这个项目
+
+![启动成功](./react/1611816095069.png)
+
+这个时会自动的打开浏览器，展现这个项目
+
+![第一个脚手架项目](./react/1611816150630.png)

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "div">
+
+    </div>
+</body>
+
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../React-js/react.development.js" type="text/javascript"></script>
+<script src="../React-js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../React-js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../React-js/prop-types.js"></script>
+
+<script type="text/babel">
+    class Person extends React.Component{
+        state = {
+            person:[
+                {id:1,name:"张三",age:18},
+                {id:2,name:"李四",age:19}
+            ]
+        }
+
+        addObject = () =>{
+            let {person} = this.state;
+            const p = {id:(person.length+1),name:"王五",age:20};
+            this.setState({person:[p,...person]});
+        }
+        
+        render() {
+            return (
+                <div>
+                    <button onClick={this.addObject}>点击增加对象</button>
+                    <ul>
+                        {
+                            this.state.person.map((p,index)=>{
+                               return <li key = {p.id}>{p.name}</li>
+                            })
+                        }
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(<Person />,document.getElementById("div"));
+</script>
+</html>

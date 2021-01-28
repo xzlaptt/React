@@ -1,0 +1,73 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <style>
+       .list{
+            height: 150px;
+            width: 200px;
+            background-color: aqua;
+            overflow:auto;
+       }
+       .news{
+           height: 30px;
+       }
+   </style>
+
+</head>
+<body>
+    <div id = "div" >
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../React-js/react.development.js" type="text/javascript"></script>
+<script src="../React-js/react-dom.development.js" type="text/javascript"></script>
+
+<script src="../React-js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../React-js/prop-types.js"></script>
+
+<script type="text/babel">
+
+  class New extends React.Component{
+
+        state = {num:[]};
+
+        //在组件创建之后
+        componentDidMount(){
+            setInterval(()=>{
+                let {num} = this.state;
+                const news = (num.length+1);
+                this.setState({num:[news,...num]});
+            },2000);
+        }
+
+        getSnapshotBeforeUpdate(){
+            return this.refs.list.scrollHeight;
+        }
+
+        componentDidUpdate(preProps,preState,height){
+            this.refs.list.scrollTop += (this.refs.list.scrollHeight - height);
+        }
+
+        render(){
+            return (
+
+                <div ref = "list" className = "list">{
+                    this.state.num.map((n,index)=>{
+                    return <div className="news" key={index} >新闻{n}</div>
+                    })
+                }</div>
+            )
+        }
+  }
+
+  ReactDOM.render(<New />,document.getElementById("div"));
+
+</script>
+</html>

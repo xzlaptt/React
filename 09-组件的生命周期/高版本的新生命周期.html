@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+
+</head>
+<body>
+    <div id = "div" >
+
+    </div>
+
+</body>
+<!-- 引入依赖 ,引入的时候，必须就按照这个步骤-->
+<script src="../React-js/17.0/react.development17.0.js" type="text/javascript"></script>
+<script src="../React-js/17.0/react-dom.development17.0.js" type="text/javascript"></script>
+
+<script src="../React-js/babel.min.js"></script>
+
+<!--引入对于组件标签的限制-->
+<script src="../React-js/17.0/prop-types.js"></script>
+
+<script type="text/babel">
+
+   class A extends React.Component{
+
+        constructor(props){
+            console.log("A --- constructor")
+            super(props);
+            this.state = {num:1}
+        }
+
+        add = () => {
+            let {num} = this.state;
+            this.setState({num:num+1});
+            //强制更新
+            //this.forceUpdate();
+        }
+
+       render(){
+           console.log("A --- render");
+            return (
+                <div>
+                    <h1>这个是第{this.state.num}个</h1>
+                    
+                    <button onClick = {this.add}>点击加一</button>
+                </div>  
+            )
+       }
+
+      //必须是静态的
+      //必须有返回值（Null或者state对象）
+      //如果返回的是state对象，里面的将会对原有的state进行覆盖，并且不能修改【因为初始化，更新都会经过这个函数】
+      //给组件传递的参数，可以作为该方法的参数传递过来。因此可以让该参数作为state。
+      //也可以以props和state作为参数进行传递
+        static getDerivedStateFromProps(props){
+          console.log("A --- getDerivedStateFromProps",props);
+            return null;
+        }
+
+        //更新的时候调用，在render和componentDidUpdate之间
+        //必须返回一个快照
+        getSnapshotBeforeUpdate(){
+            console.log("A --- getSnapshotBeforeUpdate");
+            return null;
+        }
+
+       //在render之后执行
+       componentDidMount(){
+        console.log("A --- componenetDidMount");
+       }
+
+       //更新操作 setState之后执行，判断是否可以更新（true可以，false不可以）
+       shouldComponentUpdate(){
+            console.log("A --- shouldComponentUpdate");
+            return true;
+       }
+      
+       //组件更新之后
+       componentDidUpdate(){
+            console.log("A --- componentDidUpdate");
+       }
+
+       //卸载组件之后
+       componentWillUnmonut(){
+            console.log("A --- componentWillUnmonut");
+       }
+     
+   }
+
+
+    ReactDOM.render(<A   />,document.getElementById("div"));
+
+</script>
+</html>
