@@ -1106,7 +1106,7 @@ Diff算法其实就是react生成的新虚拟DOM和以前的旧虚拟DOM的比�
 
 react提供了一个用于创建react项目的脚手架库：create-react-app
 
-创建项目并启动：
+## 创建项目并启动
 
 1.全局安装：npm i -g create-react-app
 
@@ -1128,6 +1128,617 @@ npm start   //启动这个项目
 
 ![启动成功](./react/1611816095069.png)
 
-这个时会自动的打开浏览器，展现这个项目
+这个时会自动的打开浏览器，展现这个项目：
 
 ![第一个脚手架项目](./react/1611816150630.png)
+
+## 项目的目录结构
+
+我们先来看一下public这个目录下面的结构：
+
+![public](./react/1611817630266.png)
+
+这里面最主要的还是这个Index.html文件：
+
+```react
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!--%PUBLIC_URL%表示public文件夹的路径-->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!--用于开启理想视口，用于移动端页面的适配-->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--用于配置浏览器地址栏的颜色（仅支持安卓手机浏览器）-->
+    <meta name="theme-color" content="#000000" />
+    <!--描述网页信息的-->
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <!--用于指定网页添加到手机主屏幕后的图标（仅仅支持ios）-->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+ 
+    <!--应用加壳时候的配置文件 -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  
+    <title>React App</title>
+  </head>
+  <body>
+    <!-- 浏览器不支持JS的运行的时候展现 -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+```
+
+src文件：
+
+![src文件](./react/1611818262317.png)
+
+这里面其实最主要的就是App.js以及index.js，一个是组件，一个是将组件渲染到页面中的。
+
+## 第一个脚手架应用
+
+1.我们保持public中的Index.html不变
+
+2.修改src下面的APP.js以及index.js文件
+
+App.js:  【注意：创建好的组件一定要暴露出去】
+
+```react
+//创建外壳组件APP
+import React from 'react'
+
+class App extends React.Component{
+    render(){
+        return (
+            <div>Hello word</div>
+        )
+    }
+}
+
+export default App
+```
+
+index.js: 【主要的作用其实就是将App这个组件渲染到页面上】
+
+```react
+//引入核心库
+import React from 'react'
+import ReactDOM from 'react-dom'
+//引入组件
+import App from './App'
+
+ReactDOM.render(<App />,document.getElementById("root"))
+```
+
+这样在重新启动应用，就成功了。
+
+![第一个脚手架应用](./react/1611820194124.png)
+
+我们也不建议这样直接将内容放入App组件中，尽量还是用内部组件。
+
+我们在顶一个Hello组件：
+
+```react
+import React,{Componet} from 'react'
+
+export default class Hello extends Componet{
+    render() {
+        return (
+            <h1>Hello</h1>
+        )
+    }
+}
+```
+
+在App组件中，进行使用
+
+```react
+class App extends Component{
+    render(){
+        return (
+            <div>
+                <Hello />
+            </div>
+        )
+    }
+}
+```
+
+这样的结果和前面是一样的。
+
+但是由于普通的Js和组件都是js，所一最好组件使用jsx去展示。
+
+## 样式冲突
+
+当组件逐渐增多起来的时候，我们发现，组件的样式也是越来越丰富，这样就很有可能产生两个组件中样式名称有可能会冲突，这样会根据引入App这个组件的先后顺序，后面的会覆盖前面的，
+
+为了避免这样的样式冲突，我们采用下面的形式：
+
+1.将css文件名修改： hello.css --- >hello.module.css
+
+2.引入并使用的时候改变方式：
+
+```react
+import React,{Component}from 'react'
+import hello from './hello.module.css'  //引入的时候给一个名称
+
+export default class Hello extends Component{
+    render() {
+        return (
+            <h1 className={hello.title}>Hello</h1>   //通过大括号进行调用
+        )
+    }
+}
+```
+
+# 功能界面的组件化编码流程
+
+1.拆分组件:拆分界面，抽取组件
+
+2.实现静态组件
+
+3.实现动态组件
+
+- 动态的显示初始化数据
+  - 数据类型
+  - 数据名称
+  - 保存在哪个组件
+- 交互
+
+**注意事项：**
+
+1.拆分组件、实现静态组件。注意className、style的写法
+
+2.动态初始化列表，如何确定将数据放在哪个组件的state中？
+
+- 某个组件使用：放在自身的state中
+- 某些组件使用：放在他们共同的父组件中【状态提升】
+
+3.关于父子组件之间的通信
+
+- 父组件给子组件传递数据：通过props传递
+- 子组件给父组件传递数据：通过props传递，要求父组件提前给子组件传递一个函数
+
+4.注意defaultChecked 和checked区别，defalutChecked只是在初始化的时候执行一次，checked没有这个限制，但是必须添加onChange方法类似的还有：defaultValue 和value
+
+5.状态在哪里，操作状态的方法就在哪里
+
+# react ajax
+
+React本身只关注与页面，并不包含发送ajax请求的代码，所以一般都是集成第三方的一些库，或者自己进行封装。
+
+推荐使用axios。
+
+在使用的过程中很有可能会出现跨域的问题，这样就应该配置代理。
+
+ 所谓同源（即指在同一个域）就是两个页面具有相同的协议（protocol），主机（host）和端口号（port）， 当一个请求url的**协议、域名、端口**三者之间任意一个与当前页面url不同即为跨域  。
+
+那么react通过代理解决跨域问题呢
+
+**方法一**
+
+> 在package.json中追加如下配置
+
+```json
+"proxy":"请求的地址"      "proxy":"http://localhost:5000"  
+```
+
+说明：
+
+1. 优点：配置简单，前端请求资源时可以不加任何前缀。
+2. 缺点：不能配置多个代理。
+3. 工作方式：上述方式配置代理，当请求了3000不存在的资源时，那么该请求会转发给5000 （优先匹配前端资源）
+
+**方法二**
+
+1. 第一步：创建代理配置文件
+
+   ```
+   在src下创建配置文件：src/setupProxy.js
+   ```
+
+2. 编写setupProxy.js配置具体代理规则：
+
+   ```js
+   const proxy = require('http-proxy-middleware')
+   
+   module.exports = function(app) {
+     app.use(
+       proxy('/api1', {  //api1是需要转发的请求(所有带有/api1前缀的请求都会转发给5000)
+         target: 'http://localhost:5000', //配置转发目标地址(能返回数据的服务器地址)
+         changeOrigin: true, //控制服务器接收到的请求头中host字段的值
+         /*
+         	changeOrigin设置为true时，服务器收到的请求头中的host为：localhost:5000
+         	changeOrigin设置为false时，服务器收到的请求头中的host为：localhost:3000
+         	changeOrigin默认值为false，但我们一般将changeOrigin值设为true
+         */
+         pathRewrite: {'^/api1': ''} //去除请求前缀，保证交给后台服务器的是正常请求地址(必须配置)
+       }),
+       proxy('/api2', { 
+         target: 'http://localhost:5001',
+         changeOrigin: true,
+         pathRewrite: {'^/api2': ''}
+       })
+     )
+   }
+   ```
+
+说明：
+
+1. 优点：可以配置多个代理，可以灵活的控制请求是否走代理。
+2. 缺点：配置繁琐，前端请求资源时必须加前缀。
+
+# 兄弟之间进行通信
+
+这就要借助消息订阅和发布机制。
+
+举个例子来说就是张三想要跟李四进行通信，张三就需要订阅一个消息【比如A消息】，李四想要给张三数据，就必须发布一个A消息，在发布的同时将数据放入消息中，因为张三订阅了名称为A的消息，此时就能接受到李四发布的消息，从而获取到数据。
+
+这就有点类似于看报纸，甲想要知道每天都发生什么事情，于是订阅了每天日报，乙每天都会发布这个每天日报，因为甲订阅了，于是乙就会每天就给甲方推送，甲方从而获取数据。
+
+**在消息订阅和发布中，我们可以使用PubSubJs进行通信：**
+
+引入PubSubJs:
+
+```react
+import PubSub from 'pubsub-js'
+```
+
+订阅消息：
+
+```react
+PubSub.subscribe("getSate",(_,data)=>{
+            console.log(data)
+        })
+PubSub.subscribe("订阅的消息名称",回调函数，第一个参数是消息名称，可以使用_来占位，第二个是传递的数据
+        })
+```
+
+发布消息：
+
+```react
+PubSub.publish("getSate",{isFrist:false,isLoad:true})
+PubSub.publish("订阅的消息名称",传递的数据)
+```
+
+# async和await
+
+**async:**
+
+该关键字是放在函数之前的，使得函数成为一个异步函数，他最大的特点就是将函数回封装成Promise，也就是被他修饰的函数的返回值都是Promise对象。而这个Promise对象的状态则是由函数执行的返回值决定的。
+
+如果返回的是一个非promise对象，该函数将返回一个成功的Promise，成功的值则是返回的值；
+
+如果返回的是一个promise对象，则该函数返回的就是该promise对应的状态。
+
+**await**
+
+await右边是一个表达式，如果该表达式返回的是一个Promise对象，则左边接收的结果就是该Promise对象成功的结果，如果该Promise对象失败了，就必须使用try..catch来捕获。如果该表达式返回的是是一个不是promise对象，则左边接受的就是该表达式的返回值。
+
+ 当 [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) 关键字与异步函数一起使用时，它的真正优势就变得明显了 —— 事实上， **await 只在异步函数里面才起作用**。它可以放在任何异步的，基于 promise 的函数之前。它会暂停代码在该行上，直到 promise 完成，然后返回结果值。在暂停的同时，其他正在等待执行的代码就有机会执行了。 
+
+举个例子：
+
+```react
+ f1 = () =>{
+        return new Promise((resolve,reject)=>{
+            // resolve(1);
+            reject("错误")
+        })
+    }
+
+    async function test(){
+        try{
+           const p =  await f1();
+           console.log(p)
+        }catch(error){
+            console.error(error)
+        }
+    }
+    test();
+```
+
+# fetch
+
+以前发送请求，使用ajax或者axios，现在还可以使用fetch。这个是window自带的，和xhr是一个级别的。
+
+可以查看这个文章，写的真的不错：
+
+[fetch](http://www.ruanyifeng.com/blog/2020/12/fetch-tutorial.html)
+
+# React路由
+
+## SPA
+
+单页Web应用(single page web application，SPA)。整个应用只有一个完整的页面。
+
+点击页面中的链接不会刷新页面，只会做页面的局部更新。
+
+数据都需要通过ajax请求获取,并在前端异步展现
+
+## 什么是路由
+
+一个路由其实就是一个映射关系（k:v）
+
+key为路径，value可能是function 或者是 component
+
+**后端路由：**
+
+value是function，用来处理客户端提交的请求
+
+注册路由：router.get(path,function(req,res))
+
+工作过程：当node接收一个请求的时候，根据请求路径找到匹配的路由，调用路由中的函数来处理请求，返回响应的数据
+
+**前端路由：**
+
+浏览器端路由，value是Component，用于展示页面内容
+
+注册路由：< Route path="/test" component={Test}>
+
+工作过程：当浏览器的path变为/test的时候，当前路由组件就会变成Test组件
+
+**前端路由的原理**
+
+这个主要是依靠于history，也就是浏览器的历史记录。
+
+浏览器上的记录其实就是一个栈，前进一次就是入栈，后退一次就是出栈。
+
+并且历史记录上有一个监听的方法，可以时时刻刻监听记录的变化。从而判断是否改变路径
+
+[History](https://developer.mozilla.org/zh-CN/docs/Web/API/History)
+
+## react-router-dom
+
+react的路由有三类：
+
+web【主要适用于前端】,native【主要适用于本地】,anywhere【任何地方】
+
+在这主要使用web也就是这个标题 react-router-dom
+
+**基本的使用：**
+
+导航中的a标签改写成Link标签
+
+< Link to="/路径" >xxx< /Link>
+
+展示区写Route标签进行路径的匹配
+
+< Route path = '/路径' component={组件名称}>
+
+< App>最外侧包裹了一个< BrowserRouter>或者< HashRouter>
+
+```react
+<div className="list-group">
+    <Link className="list-group-item"  to="/about">About</Link>
+    <Link className="list-group-item"  to="/home">Home</Link>
+</div>
+
+<div className="panel-body">
+    {/* 注册路由，也就是写对应的关系 */}
+    <Route path="/about"component={About}/>
+    <Route path="/home"component={Home}/>
+</div>
+
+index.js:
+ReactDOM.render(
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+    ,document.getElementById("root"))
+```
+
+那么使用Link代替a标签之后，在页面上会是什么呢，我们发现其实页面上也是把link转化为了a标签
+
+**路由组件以及一般组件**
+
+1.写法不一样
+
+一般组件：< Demo>
+
+路由组件：< Route path="/demo" component ={Demo}/>
+
+2.存放的位置一般不同
+
+一般组件：components
+
+路由组件：pages
+
+3.接收的内容【props】
+
+一般组件：写组件标签的时候传递什么，就能收到什么
+
+路由组件：接收到三个固定的属性【history,location,match】
+
+```js
+history:
+    go: ƒ go(n)
+    goBack: ƒ goBack()
+    goForward: ƒ goForward()
+    push: ƒ push(path, state)
+    replace: ƒ replace(path, state)
+location:
+    pathname: "/about"
+    search: ""
+    state: undefined
+
+match:
+    params: {}
+    path: "/about"
+    url: "/about"
+```
+
+**NavLink**
+
+因为Link不能够改变标签体，因此只适合用于一些写死的标签。而如果想要有一些点击的效果，使用NavLink.
+
+如下代码，就写了ctiveClassName，当点击的时候就会触发这个class的样式
+
+```react
+{/*NavLink在点击的时候就会去找activeClassName="ss"所指定的class的值，如果不添加默认是active
+ 这是因为Link相当于是把标签写死了，不能去改变什么。*/}
+
+<NavLink  ctiveClassName="ss" className="list-group-item"  to="/about">About</NavLink>
+<NavLink className="list-group-item"  to="/home">Home</NavLink> 
+```
+
+但是可能一个导航又很多标签，如果这样重复的写NavLink也会造成很多的重复性的代码问题。
+
+因此可以自定义一个NavLink：
+
+```react
+ // 通过{...对象}的形式解析对象，相当于将对象中的属性全部展开
+ //<NavLink  to = {this.props.to} children = {this.props.children}/>
+<NavLink className="list-group-item" {...this.props}/>
+```
+
+​	在使用的时候：直接写每个标签中不一样的部分就行，比如路径和名称
+
+```react
+{/*将NavLink进行封装，成为MyNavLink,通过props进行传参数，标签体内容props是特殊的一个属性，叫做children */}
+<MyNavLink to = "/about" >About</MyNavLink>
+```
+
+## 样式错误
+
+拿上面的案例来说：
+
+这里面会有一个样式：
+
+![样式表](./react/1612316916900.png)
+
+此时，加载该样式的路径为：
+
+![加载样式路径](./react/1612317786643.png)
+
+但是在写路由的时候，有的时候就会出现多级目录，
+
+```react
+<MyNavLink to = "/cyk/about" >About</MyNavLink>
+
+<Route path="/cyk/about"component={About}/>
+```
+
+这个时候就在刷新页面，就会出现问题：
+
+样式因为路径问题加载失败，此时页面返回public下面的Index.html
+
+![加载页面失败](./react/1612317880916.png)
+
+解决这个问题，有三个方法：
+
+1.样式加载使用绝对位置
+
+```react
+ <link href="/css/bootstrap.css" rel="stylesheet"> 
+```
+
+2.使用 %PUBLIC_URL%
+
+```
+ <link href="%PUBLIC_URL%/css/bootstrap.css" rel="stylesheet">
+```
+
+3.使用HashRouter
+
+因为HashRouter会添加#，默认不会处理#后面的路径，所以也是可以解决的
+
+## 模糊匹配和精准匹配
+
+react默认是开启模糊匹配的。
+
+比如：
+
+```react
+<MyNavLink to = "/home/a/b" >Home</MyNavLink>
+```
+
+此时该标签匹配的路由，分为三个部分 home a b；将会根据这个先后顺序匹配路由。
+
+如下就可以匹配到相应的路由：
+
+```react
+<Route path="/home"component={Home}/>
+```
+
+但是如果是下面这个就会失败，也就是说他是根据路径一级一级查询的，可以包含前面那一部分，但并不是只包含部分就可以。
+
+```react
+<Route path="/a" component={Home}/>
+```
+
+当然也可以使用这个精确的匹配 exact={true}
+
+如以下：这样就精确的匹配/home，则上面的/home/a/b就不行了
+
+```react
+<Route exact={true}  path="/home" component={Home}/>
+或者
+<Route exact path="/home" component={Home}/>
+```
+
+​	
+
+## 初始化路由
+
+在配置好路由，最开始打开页面的时候，应该是不会匹配到任意一个组件。这个时候页面就显得极其不合适，此时应该默认的匹配到一个组件。
+
+![空组件](./react/RouterDef.gif)
+
+此时就需要使用Redirect进行默认匹配了。如下的代码就是默认匹配/home路径所到的组件
+
+```react
+<Switch>
+    <Route path="/about"component={About}/>
+    {/* exact={true}：开启严格匹配的模式，路径必须一致 */}
+    <Route   path="/home" component={Home}/>
+    {/* Redirect:如果上面的都没有匹配到，就匹配到这个路径下面 */}
+    <Redirect  to = "/home"/>
+</Switch>
+```
+
+就可以做到如下的效果：
+
+## ![设置默认值](./react/RouterSetDef.gif)嵌套路由
+
+简单来说就是在一个路由组件中又使用了一个路由，就形成了嵌套路由。
+
+举个例子来说：
+
+我们在home这个路由组件中又添加两个组件：
+
+```react
+APP.jsx:
+<Route   path="/home" component={Home}/>
+Home.jsx:
+<div>
+    <ul className="nav nav-tabs">
+    <li>
+    	<MyNavLink to = "/home/news">News</MyNavLink>
+    </li>
+    <li>
+    	<MyNavLink  to = "/home/message">Message</MyNavLink>
+    </li>
+    </ul>
+    
+    <Switch>
+        <Route path = "/home/news" component={News} />
+        <Route path = "/home/message" component={Message} />
+        <Redirect to="/home/message"/>
+    </Switch>
+</div>
+```
+
+ react中路由的注册是有顺序的，因此在匹配的时候也是按照这个顺序进行的，因此会先匹配父组件中的路由 
+
+比如上面的 /home/news的路由处理过程：
+
+1.因为父组件home的路由是先注册的，因此在匹配的时候先去找home的路由，也就是根据/home/news先模糊匹配到/home
+
+2.在去Home组件里面去匹配相应的路由，从而找到了/home/news进行匹配，因此找到了News组件。
+
+但是如果开启精确匹配，就会在第一步的时候卡住，这个时候就走不下去了。**因此不要轻易的使用精确匹配**
+
